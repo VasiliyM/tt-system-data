@@ -45,3 +45,8 @@ INSERT INTO `tab_status_tt` (`id`, `forIngener`, `forCustomer`, `sort`, `descrip
 (3, 'Пауза, партнеры', 'В работе', 2, ''),
 (4, 'Пауза, клиент', 'Авария у пользователя', 3, ''),
 (5, 'Решено', 'Решено', 4, '');
+
+
+/* Добавляем поле статусов в trubl */
+
+ALTER TABLE `trubl`  ADD `status_tt` INT(2) NOT NULL DEFAULT '0' COMMENT ' tab_status_tt.id',  ADD INDEX (`status_tt`) 
