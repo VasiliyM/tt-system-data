@@ -49,4 +49,4 @@ INSERT INTO `tab_status_tt` (`id`, `forIngener`, `forCustomer`, `sort`, `descrip
 
 /* Добавляем поле статусов в trubl */
 
-ALTER TABLE `trubl`  ADD `status_tt` INT(2) NOT NULL DEFAULT '0' COMMENT ' tab_status_tt.id',  ADD INDEX (`status_tt`) 
+ALTER TABLE `trubl`  ADD `status_tt` INT(2) NOT NULL DEFAULT '1' COMMENT ' tab_status_tt.id',  ADD INDEX (`status_tt`) 
