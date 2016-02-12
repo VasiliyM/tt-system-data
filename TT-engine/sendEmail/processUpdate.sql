@@ -34,7 +34,7 @@ FROM (SELECT date_zapisi,time_zapisi,desc_zapisi,num_zap_trubl,num_trubl,transit
 			                  )  
 	 ) tmptable
 JOIN trubl ON tmptable.num_trubl=trubl.num_of_trubl_tick 
-ORDER BY CONCAT(tmptable.date_zapisi,' ',tmptable.time_zapisi) DESC, tmptable.num_zap_trubl DESC;
+ORDER BY CONCAT(tmptable.date_zapisi,' ',tmptable.time_zapisi) ASC, tmptable.num_zap_trubl ASC;
 
 
 # получаем список полностью готовых записей у которого самый старые записи внизу самые новые вверху, вставляем в email выше шапки, оптравляем
