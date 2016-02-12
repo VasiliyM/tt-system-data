@@ -25,7 +25,7 @@ FROM (SELECT date_zapisi,time_zapisi,desc_zapisi,num_zap_trubl,num_trubl,transit
 		WHERE transition  IN (61,62)  AND zapisi_trubl_tic.num_trubl like '@numTT'
 		      AND num_zap_trubl <= '@lstzap'
 	  UNION ALL
-	  SELECT date_zapisi,time_zapisi,desc_zapisi,MAX(num_zap_trubl),num_trubl,transition
+	  SELECT date_zapisi,time_zapisi,desc_zapisi,num_zap_trubl,num_trubl,transition
 		FROM zapisi_trubl_tic 
 		WHERE num_zap_trubl = (SELECT MAX(num_zap_trubl) 
 			                   FROM zapisi_trubl_tic 
@@ -38,7 +38,7 @@ ORDER BY CONCAT(tmptable.date_zapisi,' ',tmptable.time_zapisi) DESC, tmptable.nu
 
 
 # получаем список полностью готовых записей у которого самый старые записи внизу самые новые вверху, вставляем в email выше шапки, оптравляем
-# Помечаем что по этому ТТ мы email update  отправили для всех с transition 61 и 63
+# Помечаем что по этому ТТ мы email update  отправили для всех с transition 61 и 63 
   SET @numTT = 'num_tt из первой таблички ';
   SET @lstzap = 'idlast_zapis из первой таблички ';
 
