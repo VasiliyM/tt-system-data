@@ -16,18 +16,21 @@ WHERE `transition`  IN (61,63)  AND DATEDIFF(NOW(),CONCAT(date_zapisi,' ',time_z
 
 # по каждой позиции (тоесть по каждому ТТ) из полученного выше списка получаем записи которые нужно вставить в письмо используя (num_tt):
 
-SET @numTT = 'num_tt из предыдущей таблички';
+SET @numTT = 'num_tt из первой  таблички';
+SET @lstzap = 'idlast_zapis из первой таблички ';
 SELECT CONCAT(IF (trubl.date_of_start!=tmptable.date_zapisi,CONCAT(DATE_FORMAT(tmptable.date_zapisi,'%d.%m.%y'),' '),''),
        TIME_FORMAT(tmptable.time_zapisi,'%H:%i'),', ',tmptable.desc_zapisi) as msgtext
 FROM (SELECT date_zapisi,time_zapisi,desc_zapisi,num_zap_trubl,num_trubl,transition
 		FROM zapisi_trubl_tic 
 		WHERE transition  IN (61,62)  AND zapisi_trubl_tic.num_trubl like '@numTT'
+		      AND num_zap_trubl <= '@lstzap'
 	  UNION ALL
 	  SELECT date_zapisi,time_zapisi,desc_zapisi,MAX(num_zap_trubl),num_trubl,transition
 		FROM zapisi_trubl_tic 
 		WHERE num_zap_trubl = (SELECT MAX(num_zap_trubl) 
 			                   FROM zapisi_trubl_tic 
 			                   WHERE zapisi_trubl_tic.num_trubl like '@numTT' AND transition  IN (63,64)
+			                         AND num_zap_trubl <= '@lstzap'
 			                  )  
 	 ) tmptable
 JOIN trubl ON tmptable.num_trubl=trubl.num_of_trubl_tick 
@@ -35,6 +38,16 @@ ORDER BY CONCAT(tmptable.date_zapisi,' ',tmptable.time_zapisi) DESC, tmptable.nu
 
 
 # получаем список полностью готовых записей у которого самый старые записи внизу самые новые вверху, вставляем в email выше шапки, оптравляем
-# Помечаем что по этому ТТ мы email update  отправили
+# Помечаем что по этому ТТ мы email update  отправили для всех с transition 61 и 63
   SET @numTT = 'num_tt из первой таблички ';
   SET @lstzap = 'idlast_zapis из первой таблички ';
+
+  UPDATE klients.zapisi_trubl_tic 
+  SET  transition = '64', col_centr = '2'
+  WHERE zapisi_trubl_tic.num_trubl ='@numTT' AND zapisi_trubl_tic.transition = '63' AND num_zap_trubl <= '@lstzap';
+
+UPDATE klients.zapisi_trubl_tic 
+  SET  transition = '62', col_centr = '2'
+  WHERE zapisi_trubl_tic.num_trubl ='@numTT' AND zapisi_trubl_tic.transition = '61' AND num_zap_trubl <= '@lstzap';
+
+# все вроде
