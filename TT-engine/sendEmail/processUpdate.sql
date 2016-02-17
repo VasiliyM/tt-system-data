@@ -38,7 +38,7 @@ JOIN trubl ON tmptable.num_trubl=trubl.num_of_trubl_tick
 ORDER BY CONCAT(tmptable.date_zapisi,' ',tmptable.time_zapisi) DESC, tmptable.num_zap_trubl DESC;
 
 
-# получаем список полностью готовых записей у которого самый старые записи внизу самые новые вверху, вставляем в email выше шапки, оптравляем
+# получаем список полностью готовых записей у которого самый старые записи вверху самые новые внизу, вставляем в email выше шапки, оптравляем
 # Помечаем что по этому ТТ мы email update  отправили для всех с transition 61 и 63 
   SET @numTT = 'num_tt из первой таблички ';
   SET @lstzap = 'idlast_zapis из первой таблички ';
