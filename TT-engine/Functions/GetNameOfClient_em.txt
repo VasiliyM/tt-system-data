@@ -1,4 +1,4 @@
-DROP FUNCTION IF EXISTS `GetNameOfClient_em`;
+DROP FUNCTION IF EXISTS `GetNameOfClient_em` ;
 DELIMITER $$
 CREATE FUNCTION `GetNameOfClient_em`(`tab_on` INT(2) UNSIGNED, `inv_num_kli` INT(11) UNSIGNED ) RETURNS VARCHAR(500) CHARSET cp1251 DETERMINISTIC READS SQL DATA SQL SECURITY INVOKER 
 BEGIN
@@ -113,7 +113,7 @@ BEGIN
         SELECT count(*), k.`client`,t.`town`,t.`town_ua`, o.`street`, k.emailtemplate INTO N,Kli,Twn,Twn_ua,St,Em_profil FROM office_kli o, tab_klients k, tab_town t WHERE k.`id`=o.`klient` AND t.`id`=o.`town_id` AND  `id_kli`=inv_num_kli;
         if N=0 THEN RETURN 'ERROR';
         else  IF Em_profil = 'BASE_EN' THEN BEGIN
-                                            SELECT proper(_fs_transliterate_2(concat(Kli,', ',Twn_ua,', ',St))) INTO translit ;
+                                            SELECT proper(_fs_transliterate_2(concat(Kli,', ',Twn,', ',St))) INTO translit ;
                                             RETURN  tramslit;
                                             END;
               ELSE RETURN concat(Kli,', ',Twn,', ',St);
@@ -151,7 +151,7 @@ BEGIN
             else SET nSp=Sp;
             end if;
               IF Em_profil = 'BASE_EN' THEN BEGIN
-                                            SELECT proper(_fs_transliterate_2(concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s (',Twn_ua,', ',St,' - ',St2,')'))) INTO translit ;
+                                            SELECT proper(_fs_transliterate_2(concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s (',Twn,', ',St,' - ',St2,')'))) INTO translit ;
                                             RETURN translit;
                                             END;
               ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Mבטע/ס, (',Twn,', ',St,' - ',St2,')');
@@ -164,10 +164,10 @@ BEGIN
             else SET nSp=Sp;
             end if;
                 IF Em_profil = 'BASE_EN' THEN BEGIN
-                                              SELECT proper(_fs_transliterate_2(concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s, (',Twn_ua,', ',St,' - ',Twn2_ua,', ',St2,')'))) INTO translit;
+                                              SELECT proper(_fs_transliterate_2(concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s, (',Twn,', ',St,' - ',Twn2,', ',St2,')'))) INTO translit;
                                               RETURN translit;
                                               END;
-                ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Mבטע/ס, (',Twn,', ',St,' - ',Twn2,', ',St2,')');
+                ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Ìבטע/ס, (',Twn,', ',St,' - ',Twn2,', ',St2,')');
                 END IF;
           end;
           end if;
