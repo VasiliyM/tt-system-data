@@ -122,6 +122,7 @@ BEGIN
       end;
       END IF;
       IF tab_on=7 THEN
+      
       begin
         DECLARE N TINYINT;
         DECLARE of_a INT(5) unsigned;
@@ -132,9 +133,11 @@ BEGIN
         DECLARE sk_type_en VARCHAR(150);
         DECLARE Em_profil VARCHAR(50);
         DECLARE translit VARCHAR(500);
-        SELECT count(*), d.`office_a`,d.`office_b`,d.`speed`,k.`client`,sk.`name_bs`,sk.`name_en`,k.emailtemplate  INTO N, of_a, of_b, Sp, Kl, sk_type,sk_type_en, Em_profil FROM net_data d, tab_klients k, tab_katal_sk_type sk WHERE d.`client`=k.`id` AND d.`type_serv_d`=sk.`id` AND `id_data`=inv_num_kli;
+        DECLARE skid INT(3);
+        SELECT count(*), d.`office_a`,d.`office_b`,d.`speed`,k.`client`,sk.`name_bs`,sk.`name_en`,k.emailtemplate, sk.id  INTO N, of_a, of_b, Sp, Kl, sk_type,sk_type_en, Em_profil, skid FROM net_data d, tab_klients k, tab_katal_sk_type sk WHERE d.`client`=k.`id` AND d.`type_serv_d`=sk.`id` AND `id_data`=inv_num_kli;
         if N=0 THEN RETURN 'ERROR';
         else
+
         begin
           DECLARE Twn VARCHAR(150);
           DECLARE Twn_ua VARCHAR(150);
@@ -144,36 +147,52 @@ BEGIN
           DECLARE St2 VARCHAR(250); 
           SELECT `town`,`town_ua`,`street` INTO Twn,Twn_ua, St FROM office_kli o, tab_town t WHERE t.id=o.town_id AND o.`id_kli`=of_a;
           SELECT `town`,`town_ua`,`street` INTO Twn2,Twn2_ua, St2 FROM office_kli o, tab_town t WHERE t.id=o.town_id AND o.`id_kli`=of_b;
-          if Twn=Twn2 then
-          begin
-            DECLARE nSp VARCHAR(50);
-            if Sp=NULL then SET nSp='?';
-            else SET nSp=Sp;
-            end if;
-              IF Em_profil = 'BASE_EN' THEN BEGIN
-                                            SELECT proper(_fs_transliterate_2(concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s (',Twn,', ',St,' - ',St2,')'))) INTO translit ;
-                                            RETURN translit;
-                                            END;
-              ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Mבטע/ס, (',Twn,', ',St,' - ',St2,')');
-              END IF;
-            end;
-          else
-          begin
-            DECLARE nSp VARCHAR(50);
-            if Sp=NULL then SET nSp='?';
-            else SET nSp=Sp;
-            end if;
-                IF Em_profil = 'BASE_EN' THEN BEGIN
-                                              SELECT proper(_fs_transliterate_2(concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s, (',Twn,', ',St,' - ',Twn2,', ',St2,')'))) INTO translit;
-                                              RETURN translit;
-                                              END;
-                ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Ìבטע/ס, (',Twn,', ',St,' - ',Twn2,', ',St2,')');
-                END IF;
-          end;
-          end if;
+          
+          if (skid = '2' OR skid = '3') THEN 
+              BEGIN
+                      DECLARE nSp VARCHAR(50);
+                      if Sp=NULL then SET nSp='?';
+                      else SET nSp=Sp;
+                      end if;
+                          IF Em_profil = 'BASE_EN' THEN BEGIN
+                                                        RETURN concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s, (',Twn2_ua,', ',St2,')');
+                                                        END;
+                          ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Ìבטע/ס, (',Twn2,', ',St2,')');
+                          END IF;
+              END;
+          else begin
+                if Twn=Twn2 then
+                    begin
+                        DECLARE nSp VARCHAR(50);
+                        if Sp=NULL then SET nSp='?';
+                        else SET nSp=Sp;
+                        end if;
+                          IF Em_profil = 'BASE_EN' THEN BEGIN
+                                                        RETURN concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s (',Twn_ua,', ',St,' - ',St2,')');
+                                                        END;
+                          ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Mבטע/ס, (',Twn,', ',St,' - ',St2,')');
+                          END IF;
+                    end;
+                else
+                    begin
+                      DECLARE nSp VARCHAR(50);
+                      if Sp=NULL then SET nSp='?';
+                      else SET nSp=Sp;
+                      end if;
+                          IF Em_profil = 'BASE_EN' THEN BEGIN
+                                                        RETURN concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s, (',Twn_ua,', ',St,' - ',Twn2_ua,', ',St2,')');
+                                                        END;
+                          ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Ìבטע/ס, (',Twn,', ',St,' - ',Twn2,', ',St2,')');
+                          END IF;
+                    end;
+                end if;
+              END;
+            END IF;
         end;
         end if;
+      
       end;
+      
       END IF;
       IF tab_on=8 THEN
       begin   
