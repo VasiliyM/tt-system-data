@@ -108,13 +108,13 @@ BEGIN
         DECLARE Twn VARCHAR(150);
         DECLARE Twn_ua VARCHAR(150);
         DECLARE St VARCHAR(250);
+        DECLARE St_ua VARCHAR(250);
         DECLARE Em_profil VARCHAR(50);
         DECLARE translit VARCHAR(500);
-        SELECT count(*), k.`client`,t.`town`,t.`town_ua`, o.`street`, k.emailtemplate INTO N,Kli,Twn,Twn_ua,St,Em_profil FROM office_kli o, tab_klients k, tab_town t WHERE k.`id`=o.`klient` AND t.`id`=o.`town_id` AND  `id_kli`=inv_num_kli;
+        SELECT count(*), k.`client`,t.`town`,t.`town_ua`, o.`street`, o.`street_ua`,k.emailtemplate INTO N,Kli,Twn,Twn_ua,St,St_ua,Em_profil FROM office_kli o, tab_klients k, tab_town t WHERE k.`id`=o.`klient` AND t.`id`=o.`town_id` AND  `id_kli`=inv_num_kli;
         if N=0 THEN RETURN 'ERROR';
         else  IF Em_profil = 'BASE_EN' THEN BEGIN
-                                            SELECT proper(_fs_transliterate_2(concat(Kli,', ',Twn,', ',St))) INTO translit ;
-                                            RETURN  tramslit;
+                                            RETURN concat(Kli,', ',Twn_ua,', ',St_ua);
                                             END;
               ELSE RETURN concat(Kli,', ',Twn,', ',St);
               END IF;
@@ -142,11 +142,13 @@ BEGIN
           DECLARE Twn VARCHAR(150);
           DECLARE Twn_ua VARCHAR(150);
           DECLARE St VARCHAR(250);
+          DECLARE St_ua VARCHAR(250);
           DECLARE Twn2 VARCHAR(150);
           DECLARE Twn2_ua VARCHAR(150);
           DECLARE St2 VARCHAR(250); 
-          SELECT `town`,`town_ua`,`street` INTO Twn,Twn_ua, St FROM office_kli o, tab_town t WHERE t.id=o.town_id AND o.`id_kli`=of_a;
-          SELECT `town`,`town_ua`,`street` INTO Twn2,Twn2_ua, St2 FROM office_kli o, tab_town t WHERE t.id=o.town_id AND o.`id_kli`=of_b;
+          DECLARE St2_ua VARCHAR(250); 
+          SELECT `town`,`town_ua`,`street`,`street_ua` INTO Twn,Twn_ua, St,St_ua FROM office_kli o, tab_town t WHERE t.id=o.town_id AND o.`id_kli`=of_a;
+          SELECT `town`,`town_ua`,`street`,`street_ua` INTO Twn2,Twn2_ua, St2,St2_ua FROM office_kli o, tab_town t WHERE t.id=o.town_id AND o.`id_kli`=of_b;
           
           if (skid = '2' OR skid = '3') THEN 
               BEGIN
@@ -155,7 +157,7 @@ BEGIN
                       else SET nSp=Sp;
                       end if;
                           IF Em_profil = 'BASE_EN' THEN BEGIN
-                                                        RETURN concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s, (',Twn2_ua,', ',St2,')');
+                                                        RETURN concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s, (',Twn2_ua,', ',St2_ua,')');
                                                         END;
                           ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Ìבטע/ס, (',Twn2,', ',St2,')');
                           END IF;
@@ -168,7 +170,7 @@ BEGIN
                         else SET nSp=Sp;
                         end if;
                           IF Em_profil = 'BASE_EN' THEN BEGIN
-                                                        RETURN concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s (',Twn_ua,', ',St,' - ',St2,')');
+                                                        RETURN concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s (',Twn_ua,', ',St_ua,' - ',St2_ua,')');
                                                         END;
                           ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Mבטע/ס, (',Twn,', ',St,' - ',St2,')');
                           END IF;
@@ -180,7 +182,7 @@ BEGIN
                       else SET nSp=Sp;
                       end if;
                           IF Em_profil = 'BASE_EN' THEN BEGIN
-                                                        RETURN concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s, (',Twn_ua,', ',St,' - ',Twn2_ua,', ',St2,')');
+                                                        RETURN concat(Kl,', ',sk_type_en,', ',nSp,' Mbit/s, (',Twn_ua,', ',St_ua,' - ',Twn2_ua,', ',St2_ua,')');
                                                         END;
                           ELSE RETURN concat(Kl,', ',sk_type,', ',nSp,' Ìבטע/ס, (',Twn,', ',St,' - ',Twn2,', ',St2,')');
                           END IF;
