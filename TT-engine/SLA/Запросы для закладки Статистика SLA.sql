@@ -70,8 +70,8 @@ FROM  net_data
 JOIN tab_klients ON net_data.client=tab_klients.id
 JOIN tab_sla_net_data ON net_data.sla_id = tab_sla_net_data.id AND `sla_d` LIKE 'tab_sla_net_data'
 WHERE `sla_id` IN( @typeSLA ) AND in_exp<=@to AND (out_exp>@to OR  out_exp='0000-00-00')
+      AND  retail = '0' AND net_data.client not IN (16,1641,78,79,1946,2102,2174,3715)
 #----------------------------------
-
 --------------------------------------------------------------------------------------------------------------------------------------------------
 # Детальнее: Всего количество ТТ по выбранным SLA:
 SET @frm = '2016-02-01';
@@ -151,3 +151,4 @@ JOIN tab_klients ON net_data.client=tab_klients.id
 JOIN tab_sla_net_data ON net_data.sla_id = tab_sla_net_data.id AND `sla_d` LIKE 'tab_sla_net_data'
 JOIN tab_catal_comm_dep ON tab_klients.type_business = tab_catal_comm_dep.id
 WHERE `sla_id` IN( @typeSLA ) AND in_exp<=@to AND (out_exp>@to OR  out_exp='0000-00-00')
+      AND  retail = '0' AND net_data.client not IN (16,1641,78,79,1946,2102,2174,3715)
