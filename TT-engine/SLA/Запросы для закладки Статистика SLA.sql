@@ -70,7 +70,7 @@ FROM  net_data
 JOIN tab_klients ON net_data.client=tab_klients.id
 JOIN tab_sla_net_data ON net_data.sla_id = tab_sla_net_data.id AND `sla_d` LIKE 'tab_sla_net_data'
 WHERE `sla_id` IN( @typeSLA ) AND in_exp<=@to AND (out_exp>@to OR  out_exp='0000-00-00')
-      AND  retail = '0' AND net_data.client not IN (16,1641,78,79,1946,2102,2174,3715)
+      AND net_data.retail = '0' AND net_data.client not IN (16,1641,78,79,1946,2102,2174,3715)
 #----------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------------
 # Детальнее: Всего количество ТТ по выбранным SLA:
@@ -144,11 +144,17 @@ SET @to = '2016-04-26';
 SET @typeSLA = '1,2';
 
 SELECT tab_klients.client AS Клиент, tab_sla_net_data.name AS SLA, GetNameOfClient('7',net_data.id_data) AS 'Услуга',
+      tab_katal_sk_type.name as 'Тип услуги',
 	Concat(change_login," ",CAST(LEFT(last_edit,16) AS CHAR)) AS 'Последнее редактирование', CID,net_data.planerid  AS Планер,
        tab_catal_comm_dep.namedepartment as 'Тип бизнеса'
 FROM  net_data
 JOIN tab_klients ON net_data.client=tab_klients.id
 JOIN tab_sla_net_data ON net_data.sla_id = tab_sla_net_data.id AND `sla_d` LIKE 'tab_sla_net_data'
 JOIN tab_catal_comm_dep ON tab_klients.type_business = tab_catal_comm_dep.id
+JOIN tab_katal_sk_type  ON net_data.type_serv_d = tab_katal_sk_type.id
 WHERE `sla_id` IN( @typeSLA ) AND in_exp<=@to AND (out_exp>@to OR  out_exp='0000-00-00')
       AND  retail = '0' AND net_data.client not IN (16,1641,78,79,1946,2102,2174,3715)
+
+#--------------
+
+          
