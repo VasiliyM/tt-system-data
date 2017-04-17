@@ -1,12 +1,16 @@
-DROP FUNCTION IF EXISTS `GetNameOfClient_em` ;
+DROP FUNCTION IF EXISTS `GetNameOfClient_em`;
 DELIMITER $$
-CREATE FUNCTION `GetNameOfClient_em`(`tab_on` INT(2) UNSIGNED, `inv_num_kli` INT(11) UNSIGNED ) RETURNS VARCHAR(500) CHARSET cp1251 DETERMINISTIC READS SQL DATA SQL SECURITY INVOKER 
+
+CREATE DEFINER=`vmoroz`@`%` FUNCTION `GetNameOfClient_em`(`tab_on` INT(2) UNSIGNED, `inv_num_kli` INT(11) UNSIGNED ) RETURNS varchar(500) CHARSET cp1251
+    READS SQL DATA
+    DETERMINISTIC
+    SQL SECURITY INVOKER
 BEGIN
       IF tab_on=0 THEN
       begin 
         DECLARE adr VARCHAR(250);
         DECLARE kli VARCHAR(250);
-        SELECT `adress`,`klient` INTO adr, kli FROM zaporozhie WHERE `inv_number`=inv_num_kli; 	
+        SELECT `adress`,`klient` INTO adr, kli FROM zaporozhie WHERE `inv_number`=inv_num_kli;  
         RETURN concat_ws(' - ', adr, kli);
       end;
       END IF;
@@ -49,7 +53,7 @@ BEGIN
         if N=0 THEN RETURN 'ERROR';
         else
         begin
-          if L=0 then	
+          if L=0 then 
           begin
             DECLARE Adr VARCHAR(250);
             DECLARE Twn VARCHAR(150);
@@ -223,26 +227,23 @@ BEGIN
       begin
         DECLARE N TINYINT; 
         DECLARE cli INT(5) unsigned;
-    	SELECT count(*),`clients` INTO N, cli FROM outs_hardware WHERE `outs_id`=inv_num_kli;
-    	if N=0 THEN RETURN 'ERROR';
-    	else
-    	begin
-    	  DECLARE kli INT(5) unsigned;
-    	  DECLARE str VARCHAR(250);
-    	  DECLARE twi INT(5) unsigned;
-    	  DECLARE cl VARCHAR(250);
-    	  DECLARE tw VARCHAR(250);
-    	  SELECT `klient`,`town_id`,`street` INTO kli,twi,str FROM office_kli WHERE `id_kli`=cli;
-    	  SELECT `client` INTO cl FROM tab_klients WHERE `id`=kli;
-    	  SELECT `town` INTO tw FROM tab_town WHERE `id`=twi;
-    	  RETURN concat('OUTS - ',cl,', ',tw,', ',str);
-    	end;
+      SELECT count(*),`clients` INTO N, cli FROM outs_hardware WHERE `outs_id`=inv_num_kli;
+      if N=0 THEN RETURN 'ERROR';
+      else
+      begin
+        DECLARE kli INT(5) unsigned;
+        DECLARE str VARCHAR(250);
+        DECLARE twi INT(5) unsigned;
+        DECLARE cl VARCHAR(250);
+        DECLARE tw VARCHAR(250);
+        SELECT `klient`,`town_id`,`street` INTO kli,twi,str FROM office_kli WHERE `id_kli`=cli;
+        SELECT `client` INTO cl FROM tab_klients WHERE `id`=kli;
+        SELECT `town` INTO tw FROM tab_town WHERE `id`=twi;
+        RETURN concat('OUTS - ',cl,', ',tw,', ',str);
+      end;
         end if;
       end;
       END IF;
    
-
-
-END;
-$$
+END$$
 DELIMITER ;

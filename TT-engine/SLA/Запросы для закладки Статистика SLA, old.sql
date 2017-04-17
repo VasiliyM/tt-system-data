@@ -127,7 +127,7 @@ SET @typeSLA = '1,2';
 	  LEFT(TIMEDIFF(CONCAT(trubl_crew.date_of_end,' ',trubl_crew.time_of_end),CONCAT(trubl_crew.date_of_start,' ',trubl_crew.time_of_start)),5) AS 'Длительн.выезда ч.',
 	  LEFT(TIMEDIFF(CONCAT(trubl_crew.date_of_start,' ',trubl_crew.time_of_start),dt_open),5) AS 'Собрались за ч.',
 	  CONCAT(LEFT(dt_open,16),' /',trubl_crew.date_of_start,' ',LEFT(trubl_crew.time_of_start,5),' /',trubl_crew.date_of_end,' ',LEFT(trubl_crew.time_of_end,5)) AS 'Поставлен/начали/закончили',
-       tab_sla_net_data.timeframe AS 'Срок по СЛА, ч', trubl_crew.sum_pauses as 'Пауза ТТ, минут',tab_sla_net_data.name AS SLA,
+       tab_sla_net_data.timeframe AS 'Срок по СЛА, ч',tab_sla_net_data.name AS SLA,
        name_of_crew AS Группа, klient AS Клиент, type_tt AS Тип_заявки, zadanie AS Задача, report AS Отчет
 	FROM trubl_crew 
 	JOIN trubl ON trubl_crew.num_trubl = trubl.num_of_trubl_tick 
@@ -157,4 +157,33 @@ WHERE `sla_id` IN( @typeSLA ) AND in_exp<=@to AND (out_exp>@to OR  out_exp='0000
 
 #--------------
 
+# Детальнее: Всего (количество) услуг с выбранными SLA + Схемы включения, для Максима и передачи СМБ в розничный саппорт:
+SET @frm = '2016-12-01';
+SET @to = '2016-12-08';
+SET @typeSLA = '1,2';
+
+SELECT tab_klients.client AS Клиент, tab_sla_net_data.name AS SLA, GetNameOfClient('7',net_data.id_data) AS 'Услуга',
+      tab_katal_sk_type.name as 'Тип услуги',
+      Concat(change_login," ",CAST(LEFT(last_edit,16) AS CHAR)) AS 'Последнее редактирование', CID,net_data.planerid  AS Планер,
+       tab_catal_comm_dep.namedepartment as 'Тип бизнеса', shema  as Схема
+FROM  net_data
+JOIN tab_klients ON net_data.client=tab_klients.id
+JOIN tab_sla_net_data ON net_data.sla_id = tab_sla_net_data.id AND `sla_d` LIKE 'tab_sla_net_data'
+JOIN tab_catal_comm_dep ON tab_klients.type_business = tab_catal_comm_dep.id
+JOIN tab_katal_sk_type  ON net_data.type_serv_d = tab_katal_sk_type.id
+WHERE `sla_id` IN(1,2,3,4,5,6) AND in_exp<= '2016-12-08' AND (out_exp> '2016-12-08' OR  out_exp='0000-00-00')
+      AND  retail = '0' AND net_data.client not IN (16,1641,78,79,1946,2102,2174,3715)
+      AND tab_catal_comm_dep.namedepartment like 'СМБ'
+
+# Детальнее: Всего (количество) типов услуг с выбранными SLA  для Максима 
+
+SELECT tab_catal_comm_dep.namedepartment as 'Тип бизнеса', tab_katal_sk_type.name as 'Тип услуги', COUNT(*) as Количество
+FROM  net_data
+JOIN tab_klients ON net_data.client=tab_klients.id
+JOIN tab_sla_net_data ON net_data.sla_id = tab_sla_net_data.id AND `sla_d` LIKE 'tab_sla_net_data'
+JOIN tab_catal_comm_dep ON tab_klients.type_business = tab_catal_comm_dep.id
+JOIN tab_katal_sk_type  ON net_data.type_serv_d = tab_katal_sk_type.id
+WHERE `sla_id` IN(1,2,3,4,5,6) AND in_exp<= '2016-12-14' AND (out_exp> '2016-12-07' OR  out_exp='0000-00-00')
+      AND  retail = '0' AND net_data.client not IN (16,1641,78,79,1946,2102,2174,3715)
+GROUP by tab_catal_comm_dep.namedepartment, tab_katal_sk_type.name
           
